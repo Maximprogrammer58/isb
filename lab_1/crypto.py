@@ -19,3 +19,10 @@ def frequency_analysis(text: str) -> dict:
     for key in frequency:
         frequency[key] = frequency[key] / len(text)
     return dict(sorted(frequency.items(), key=lambda x: x[1], reverse=True))
+
+
+def decryption_by_key(code: str, key: dict) -> str:
+    '''The function for decryption by key helps to get rid of a large number of replace'''
+    for letter in key:
+        code = code.replace(letter, key[letter])
+    return code
