@@ -1,6 +1,6 @@
-
 import sys
 import crypto
+import file_handler
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
@@ -8,13 +8,14 @@ from PyQt5.QtWidgets import QMessageBox
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.path = None
+        self.key = None
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(820, 687)
-        self.path = None
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(30, 20, 171, 41))
+        self.label.setGeometry(QtCore.QRect(20, 20, 781, 41))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(False)
@@ -23,16 +24,13 @@ class Ui_MainWindow(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(50, 80, 421, 31))
+        self.label_2.setGeometry(QtCore.QRect(50, 80, 561, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setGeometry(QtCore.QRect(50, 310, 113, 22))
-        self.lineEdit_2.setObjectName("lineEdit_2")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(50, 280, 111, 31))
+        self.label_3.setGeometry(QtCore.QRect(50, 280, 131, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_3.setFont(font)
@@ -41,19 +39,19 @@ class Ui_MainWindow(object):
         self.pushButton.setGeometry(QtCore.QRect(50, 350, 181, 61))
         self.pushButton.setStyleSheet("background-color: rgb(255, 170, 127)")
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(self.caesar_cipher)
+        self.pushButton.clicked.connect(self.decode)
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setGeometry(QtCore.QRect(50, 430, 191, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setGeometry(QtCore.QRect(50, 150, 651, 131))
-        self.plainTextEdit.setObjectName("plainTextEdit")
-        self.plainTextEdit_2 = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit_2.setGeometry(QtCore.QRect(50, 500, 651, 131))
-        self.plainTextEdit_2.setObjectName("plainTextEdit_2")
+        self.encryptedplainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.encryptedplainTextEdit.setGeometry(QtCore.QRect(50, 150, 651, 131))
+        self.encryptedplainTextEdit.setObjectName("encryptedplainTextEdit")
+        self.decryptedTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.decryptedTextEdit.setGeometry(QtCore.QRect(50, 500, 651, 131))
+        self.decryptedTextEdit.setObjectName("decryptedTextEdit")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(50, 110, 111, 31))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -62,17 +60,10 @@ class Ui_MainWindow(object):
         self.pushButton_3.setGeometry(QtCore.QRect(50, 460, 151, 31))
         self.pushButton_3.setObjectName("pushButton_3")
         self.pushButton_3.clicked.connect(self.save_file)
-        self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(390, 300, 161, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_5.setFont(font)
-        self.label_5.setObjectName("label_5")
-        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(550, 300, 151, 31))
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
+        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_4.setGeometry(QtCore.QRect(50, 310, 111, 31))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_4.clicked.connect(self.get_key)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 820, 26))
@@ -88,44 +79,58 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Шифр Цезаря"))
-        self.label_2.setText(_translate("MainWindow", "Введите текст для шифрования или загрузите файл"))
-        self.label_3.setText(_translate("MainWindow", "Ключ"))
-        self.pushButton.setText(_translate("MainWindow", "Зашифровать"))
-        self.label_4.setText(_translate("MainWindow", "Зашифрованный текст"))
+        self.label.setText(_translate("MainWindow", "Расшифровка текста, закодированного шифром простой подстановки, по ключу"))
+        self.label_2.setText(_translate("MainWindow", "Введите текст для расшифровки или загрузите из файла"))
+        self.label_3.setText(_translate("MainWindow", "Загрузите ключ"))
+        self.pushButton.setText(_translate("MainWindow", "Расшифровать"))
+        self.label_4.setText(_translate("MainWindow", "Расшифрованный текст"))
         self.pushButton_2.setText(_translate("MainWindow", "Загрузить файл"))
         self.pushButton_3.setText(_translate("MainWindow", "Сохранить результат"))
-        self.label_5.setText(_translate("MainWindow", "Выберите алфавит:"))
-        self.comboBox.setItemText(0, _translate("MainWindow", "Русский"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "Английский"))
-
-    def __warning_icon(self, text, info):
-        '''A pop-up message when an exception occurs'''
+        self.pushButton_4.setText(_translate("MainWindow", "Загрузить файл"))
+        
+    def get_key(self):
+        """Reading the decoding key from the json file"""
+        path = QtWidgets.QFileDialog.getOpenFileName()[0]
+        if path != "":
+            try:
+                self.key = file_handler.read_json(path)
+            except Exception as e:
+                self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        
+    def decode(self):
+        """Decryption of the text encoded with a simple substitution cipher by the key"""
+        code = self.encryptedplainTextEdit.toPlainText()
+        if self.key is None:
+            self.__warning_icon("Предупреждение", "Выберите ключ декодирования")
+            return
+        try:
+            decrypted_text = crypto.decryption_by_key(code, self.key)
+            self.decryptedTextEdit.setPlainText(decrypted_text)
+        except Exception as e:
+            self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        
+    def __warning_icon(self, text: str, info: str):
+        """A pop-up message when an exception occurs
+        Args:
+            text: the MessageBox header
+            info: text of MessageBox
+        """
         error = QtWidgets.QMessageBox()
         error.setIcon(QMessageBox.Warning)
         error.setWindowTitle(text)
         error.setText(info)
         error.exec_()
 
-    def __success_icon(self, text, info):
-        '''A pop-up message when the process is completed successfully'''
+    def __success_icon(self, text: str, info: str):
+        """A pop-up message when the process is completed successfully
+        Args:
+            text: the MessageBox header
+            info: text of MessageBox
+        """
         success = QtWidgets.QMessageBox()
         success.setWindowTitle(text)
         success.setText(info)
         success.exec_()
-
-    def caesar_cipher(self):
-        text = self.plainTextEdit.toPlainText()
-        key = self.lineEdit_2.text()
-        alphabet = self.comboBox.currentText()
-        if (key.isdigit() and int(key) > 0):
-            if (alphabet == "Английский"):
-                encrypted_text = crypto.caesar_cipher(text, int(key), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-            else:
-                encrypted_text = crypto.caesar_cipher(text, int(key))
-            self.plainTextEdit_2.setPlainText(encrypted_text)
-        else:
-            self.__warning_icon("Предупреждение", "Введите корректное значение ключа key")
 
     def load_file(self):
         '''Downloading text from a file'''
@@ -133,9 +138,9 @@ class Ui_MainWindow(object):
         if self.path != '':
             try:
                 with open(self.path, "r", encoding="utf-8") as file:
-                    self.plainTextEdit.setPlainText(file.read())
-            except:
-                self.__warning_icon("Ошибка", "Ошибка открытия файла")
+                    self.encryptedplainTextEdit.setPlainText(file.read())
+            except Exception as e:
+                self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
 
     def save_file(self):
         '''Saving text to a file from a text field'''
@@ -143,12 +148,12 @@ class Ui_MainWindow(object):
         if self.path != '':
             try:
                 with open(self.path, "w", encoding="utf-8") as file:
-                    file.write(self.plainTextEdit_2.toPlainText())
+                    file.write(self.decryptedTextEdit.toPlainText())
                     self.__success_icon("Сообщение", "Текст записан в файл")
-            except:
-                self.__warning_icon("Ошибка", "Ошибка записи в файл")
+            except Exception as e:
+                self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
 
-
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
