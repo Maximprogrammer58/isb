@@ -7,9 +7,23 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    """ Main window of the gui-program 
+    Methods:
+        setupUi(MainWindow): creating widget objects
+        retranslateUi(MainWindow): sets the text and headers of the widgets
+        __warning_icon(text, info): pop-up message when an exception occurs
+        __success_icon(text, info): pop-up message when the process is success
+        caesar_cipher(): Caesar's Cipher
+        load_file(): downloading text from a file
+        save_file(): saving text to a file from a text field
+    """
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
+        """Creating widget objects in the appropriate containers
+        Args:
+            MainWindow: base window of the gui-program        
+        """
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(820, 687)
+        MainWindow.resize(820, 687) 
         self.path = None
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -85,7 +99,11 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
+        """Sets the text and headers of the widgets
+        Args:
+            MainWindow: base window of the gui-program  
+        """
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Шифр Цезаря"))
@@ -99,7 +117,7 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(0, _translate("MainWindow", "Русский"))
         self.comboBox.setItemText(1, _translate("MainWindow", "Английский"))
 
-    def __warning_icon(self, text: str, info: str):
+    def __warning_icon(self, text: str, info: str) -> None:
         """A pop-up message when an exception occurs
         Args:
             text: the MessageBox header
@@ -111,7 +129,7 @@ class Ui_MainWindow(object):
         error.setText(info)
         error.exec_()
 
-    def __success_icon(self, text: str, info: str):
+    def __success_icon(self, text: str, info: str) -> None:
         """A pop-up message when the process is completed successfully
         Args:
             text: the MessageBox header
@@ -122,7 +140,7 @@ class Ui_MainWindow(object):
         success.setText(info)
         success.exec_()
 
-    def caesar_cipher(self):
+    def caesar_cipher(self) -> None:
         """Caesar's Cipher"""
         text = self.plainTextEdit.toPlainText()
         key = self.lineEdit_2.text()
@@ -133,7 +151,7 @@ class Ui_MainWindow(object):
         else:
             self.__warning_icon("Предупреждение", "Введите корректное значение ключа key")
 
-    def load_file(self):
+    def load_file(self) -> None:
         '''Downloading text from a file'''
         self.path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if self.path != '':
@@ -142,8 +160,10 @@ class Ui_MainWindow(object):
                     self.plainTextEdit.setPlainText(file.read())
             except Exception as e:
                 self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        else:
+            self.__warning_icon("Предупреждение", "Вы не выбрали файл")
 
-    def save_file(self):
+    def save_file(self) -> None:
         '''Saving text to a file from a text field'''
         self.path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if self.path != '':
@@ -153,11 +173,14 @@ class Ui_MainWindow(object):
                     self.__success_icon("Сообщение", "Текст записан в файл")
             except Exception as e:
                 self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        else:
+            self.__warning_icon("Предупреждение", "Вы не выбрали файл")
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
+    print(type(MainWindow))
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()

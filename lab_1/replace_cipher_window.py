@@ -7,7 +7,22 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    """ Main window of the gui-program
+    Methods:
+        setupUi(MainWindow): creating widget objects
+        retranslateUi(MainWindow): sets the text and headers of the widgets
+        __warning_icon(text, info): pop-up message when an exception occurs
+        __success_icon(text, info): pop-up message when the process is success
+        get_key(self): reading the decoding key from the json file
+        load_file(): downloading text from a file
+        save_file(): saving text to a file from a text field
+        decode(self): decryption of the text by the key"
+    """
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
+        """ Creating widget objects in the appropriate containers
+        Args:
+            MainWindow: base window of the gui-program        
+        """
         self.path = None
         self.key = None
         MainWindow.setObjectName("MainWindow")
@@ -76,7 +91,11 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
+        """Sets the text and headers of the widgets
+        Args:
+            MainWindow: base window of the gui-program  
+        """
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Расшифровка текста, закодированного шифром простой подстановки, по ключу"))
@@ -88,7 +107,7 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "Сохранить результат"))
         self.pushButton_4.setText(_translate("MainWindow", "Загрузить файл"))
         
-    def get_key(self):
+    def get_key(self) -> None:
         """Reading the decoding key from the json file"""
         path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if path != "":
@@ -96,8 +115,11 @@ class Ui_MainWindow(object):
                 self.key = file_handler.read_json(path)
             except Exception as e:
                 self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        else:
+            self.__warning_icon("Предупреждение", "Вы не выбрали файл")
         
-    def decode(self):
+        
+    def decode(self) -> None:
         """Decryption of the text encoded with a simple substitution cipher by the key"""
         code = self.encryptedplainTextEdit.toPlainText()
         if self.key is None:
@@ -109,7 +131,7 @@ class Ui_MainWindow(object):
         except Exception as e:
             self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
         
-    def __warning_icon(self, text: str, info: str):
+    def __warning_icon(self, text: str, info: str) -> None:
         """A pop-up message when an exception occurs
         Args:
             text: the MessageBox header
@@ -121,7 +143,7 @@ class Ui_MainWindow(object):
         error.setText(info)
         error.exec_()
 
-    def __success_icon(self, text: str, info: str):
+    def __success_icon(self, text: str, info: str) -> None:
         """A pop-up message when the process is completed successfully
         Args:
             text: the MessageBox header
@@ -132,7 +154,7 @@ class Ui_MainWindow(object):
         success.setText(info)
         success.exec_()
 
-    def load_file(self):
+    def load_file(self) -> None:
         '''Downloading text from a file'''
         self.path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if self.path != '':
@@ -141,8 +163,10 @@ class Ui_MainWindow(object):
                     self.encryptedplainTextEdit.setPlainText(file.read())
             except Exception as e:
                 self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        else:
+            self.__warning_icon("Предупреждение", "Вы не выбрали файл")
 
-    def save_file(self):
+    def save_file(self) -> None:
         '''Saving text to a file from a text field'''
         self.path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if self.path != '':
@@ -152,6 +176,8 @@ class Ui_MainWindow(object):
                     self.__success_icon("Сообщение", "Текст записан в файл")
             except Exception as e:
                 self.__warning_icon("Ошибка", f"Детали ошибки: {e}")
+        else:
+            self.__warning_icon("Предупреждение", "Вы не выбрали файл")
 
         
 if __name__ == "__main__":
