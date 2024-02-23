@@ -3,5 +3,6 @@ from NIST_TESTS import NistTests
 
 
 if __name__ == "__main__":
-    test = NistTests(file_handler.read_file("sequence/binary_sequence_Java.txt"))
-    print(test.frequency_bitwise_test())
+    test_c = NistTests("1101")
+    print(test_c.frequency_bitwise_test())
+    print("------------------")
