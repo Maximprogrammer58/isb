@@ -117,7 +117,7 @@ class NistTests:
     def __str__(self):
         """The function of printing test results"""
         response = ""
-        response += f"Test 1: {self.frequency_bitwise_test()}\n"
-        response += f"Test 2: {self.consecutive_bits_test()}\n"
-        response += f"Test 3: {self.longest_sequence_test()}\n"
+        response += f"Частотный побитовый тест: {self.frequency_bitwise_test()}\n"
+        response += f"Тест на одинаковые подряд идущие биты: {self.consecutive_bits_test()}\n"
+        response += f"Тест на самую длинную послед. единиц в блоке: {self.longest_sequence_test()}\n"
         return response
