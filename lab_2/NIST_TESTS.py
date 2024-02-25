@@ -42,7 +42,6 @@ class NistTests:
         except Exception as error:
             logging.error(error)
 
-
     def consecutive_bits_test(self) -> float:
         """Test for the same consecutive bits
          Returns:
