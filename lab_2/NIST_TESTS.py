@@ -1,19 +1,33 @@
 import logging
 import math
-import scipy
 
 logging.basicConfig(level=logging.INFO)
 
 pi = {0: 0.2148, 1: 0.3672, 2: 0.2305, 3: 0.1875}
 
 class NistTests:
+    """ NIST tests sequence checks for randomness
+       Args:
+           sequence: a pseudorandom sequence
+           length: the length of the sequence
+       Methods:
+           frequency_bitwise_test: Frequency bitwise test
+           consecutive_bits_test: Test for the same consecutive bits
+           longest_sequence_test: The test for the longest sequence of units in the block
+           length_greatest_subsequence: Determining the length of the largest subsequence of units
+    """
     BLOCK_LENGTH = 8
 
     def __init__(self, sequence: str) -> None:
+        """Class initializer"""
         self.sequence = sequence
         self.length = len(sequence)
 
     def frequency_bitwise_test(self) -> float:
+        """Frequency bitwise test
+         Returns:
+           Probability that the generator produces values comparable to the reference (P-value)
+         """
         try:
             s_sum = 0
             for bit in self.sequence:
@@ -30,6 +44,10 @@ class NistTests:
 
 
     def consecutive_bits_test(self) -> float:
+        """Test for the same consecutive bits
+         Returns:
+           P-value
+         """
         try:
             percentage_units = self.sequence.count("1") / self.length
             if not (abs(percentage_units - 0.5) < (2 / math.sqrt(self.length))):
@@ -46,8 +64,11 @@ class NistTests:
         except Exception as error:
             logging.error(error)
 
-
     def longest_sequence_test(self):
+        """The test for the longest sequence of units in the block
+         Returns:
+             Chi-square
+         """
         try:
             block_max_len = {}
             for step in range(0, self.length, self.BLOCK_LENGTH):
@@ -70,12 +91,19 @@ class NistTests:
             xi_square = 0
             for i in range(4):
                 xi_square += math.pow(v[i + 1] - 16 * pi[i], 2) / (16 * pi[i])
-            return scipy.special.gammainc(3 / 2, xi_square / 2)
+            return xi_square
         except Exception as error:
             logging.error(error)
 
     @staticmethod
     def length_greatest_subsequence(sequence: str, item: str) -> int:
+        """ Determining the length of the largest subsequence of units
+         Args:
+           sequence: a pseudorandom sequence
+           item: the element whose maximum sequence length needs to be found
+         Returns:
+           The length of the maximum sequence
+         """
         max_lenght = 0
         length = 0
         for letter in sequence:
@@ -85,3 +113,11 @@ class NistTests:
             else:
                 length = 0
         return max_lenght
+
+    def __str__(self):
+        """The function of printing test results"""
+        response = ""
+        response += f"Test 1: {self.frequency_bitwise_test()}\n"
+        response += f"Test 2: {self.consecutive_bits_test()}\n"
+        response += f"Test 3: {self.longest_sequence_test()}\n"
+        return response
