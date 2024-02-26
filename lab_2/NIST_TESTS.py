@@ -1,5 +1,6 @@
 import logging
 import math
+import scipy
 
 logging.basicConfig(level=logging.INFO)
 
@@ -63,10 +64,10 @@ class NistTests:
         except Exception as error:
             logging.error(error)
 
-    def longest_sequence_test(self):
+    def longest_sequence_test(self) -> float:
         """The test for the longest sequence of units in the block
          Returns:
-             Chi-square
+             P-value
          """
         try:
             block_max_len = {}
@@ -90,7 +91,7 @@ class NistTests:
             xi_square = 0
             for i in range(4):
                 xi_square += math.pow(v[i + 1] - 16 * pi[i], 2) / (16 * pi[i])
-            return xi_square
+            return scipy.special.gammainc(3 / 2,  xi_square / 2)
         except Exception as error:
             logging.error(error)
 
@@ -113,7 +114,7 @@ class NistTests:
                 length = 0
         return max_lenght
 
-    def __str__(self):
+    def __str__(self) -> str:
         """The function of printing test results"""
         response = ""
         response += f"Частотный побитовый тест: {self.frequency_bitwise_test()}\n"
