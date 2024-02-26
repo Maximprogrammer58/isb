@@ -1,6 +1,6 @@
 import logging
 import math
-import scipy
+import mpmath
 
 logging.basicConfig(level=logging.INFO)
 
@@ -91,7 +91,7 @@ class NistTests:
             xi_square = 0
             for i in range(4):
                 xi_square += math.pow(v[i + 1] - 16 * pi[i], 2) / (16 * pi[i])
-            return scipy.special.gammainc(3 / 2,  xi_square / 2)
+            return mpmath.gammainc(3 / 2,  xi_square / 2)
         except Exception as error:
             logging.error(error)
 
