@@ -59,3 +59,35 @@ def deserialization_private_key(private_pem: str) -> rsa.RSAPrivateKey:
         return load_pem_private_key(private_bytes, password=None, )
     except Exception as error:
         logging.error(error)
+
+def read_data(file_path: str) -> str:
+    try:
+        with open(file_path, "r", encoding='utf-8') as file:
+            data = file.read()
+        return data
+    except Exception as error:
+        logging.error(error)
+
+
+def read_bytes(file_path: str) -> bytes:
+    try:
+        with open(file_path, "rb") as file:
+            data = file.read()
+        return data
+    except Exception as error:
+        logging.error(error)
+
+
+def write_bytes_text(file_path: str, bytes_text: bytes) -> None:
+    try:
+        with open(file_path, "wb") as file:
+            file.write(bytes_text)
+    except Exception as error:
+        logging.error(error)
+
+def write_text(file_path: str, info: str) -> None:
+    try:
+        with open(file_path, "w", encoding='utf-8') as file:
+            file.write(info)
+    except Exception as error:
+        logging.error(error)
