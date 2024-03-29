@@ -1,19 +1,36 @@
-from modules.KeyGenerator import KeyGenerator
-from modules.Encryption import Encryption
+import argparse
+
 from modules.Decryption import Decryption
+from modules.Encryption import Encryption
+from modules.KeyGenerator import KeyGenerator
+from modules.serialize_and_deserialize import read_json
 
 
 if __name__ == "__main__":
-    key_generator = KeyGenerator("symmetric.txt", 'public.pem','private.pem')
-    key_generator.get_symmetric_key()
-    key_generator.generate_asymmetric_keys()
-    key_generator.serialize_asymmetric_keys()
-    key_generator.encrypt_symmetric_encryption_key_with_public()
+    settings = read_json("settings.json")
 
-    encrypt = Encryption("text.txt", "private.pem", "symmetric.txt", "encrypt_text.txt")
-    encrypt.decrypt_symmetric_key()
-    encrypt.encrypt_text_using_symmetric_key()
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-gen', '--generation', help='Запускает режим генерации ключей')
+    group.add_argument('-enc', '--encryption', help='Запускает режим шифрования')
+    group.add_argument('-dec', '--decryption', help='Запускает режим дешифрования')
 
-    decrypt = Decryption("encrypt_text.txt", "private.pem", "symmetric.txt", "decrypt_text.txt")
-    decrypt.decrypt_symmetric_key()
-    decrypt.decrypt_text_using_symmetric_key()
+    args = parser.parse_args()
+
+    if args.generation is not None:
+        key_generator = KeyGenerator(settings["symmetric_key"],
+                                     settings["public_key"],
+                                     settings["private_key"])
+        key_generator()
+    elif args.encryption is not None:
+        encrypt = Encryption(settings["initial_file"],
+                             settings["private_key"],
+                             settings["symmetric_key"],
+                             settings["encrypted_file"])
+        encrypt()
+    else:
+        decrypt = Decryption(settings["encrypted_file"],
+                             settings["private_key"],
+                             settings["symmetric_key"],
+                             settings["decrypted_file"])
+        decrypt()
