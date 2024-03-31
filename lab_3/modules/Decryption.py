@@ -41,8 +41,11 @@ class Decryption:
                                                                                                            algorithm=hashes.SHA256(), label=None))
         return self.__symmetric_key
 
-    def decrypt_text_using_symmetric_key(self) -> None:
-        """Decrypt the text using a symmetric algorithm and save it along the specified path"""
+    def decrypt_text_using_symmetric_key(self) -> str:
+        """Decrypt the text using a symmetric algorithm and save it along the specified path
+            Returns:
+                decrypted text
+        """
         text = read_bytes(self.encrypted_path_text)
         iv = text[:self.__key_size]
         encrypted_text = text[self.__key_size:]
@@ -51,7 +54,9 @@ class Decryption:
         decrypted_text = decryptor.update(encrypted_text) + decryptor.finalize()
         unpadder = padding.PKCS7(self.__key_size * 8).unpadder()
         unpadded_dc_text = unpadder.update(decrypted_text) + unpadder.finalize()
-        write_text(self.path_decrypted_text, unpadded_dc_text.decode('UTF-8'))
+        dec_text = unpadded_dc_text.decode('UTF-8')
+        write_text(self.path_decrypted_text, dec_text)
+        return dec_text
 
     def __call__(self) -> None:
         """A method can make an instance of a class behave like a function"""
