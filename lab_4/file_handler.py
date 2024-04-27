@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
-def read_card_info(path: str) -> dict:
+def read_json(path: str) -> dict:
     try:
         with open(path, 'r', encoding='UTF-8') as file:
             return json.load(file)

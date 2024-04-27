@@ -21,3 +21,13 @@ def select_card_number(hash: str, bins: list, last_digit: int) -> None:
             if res:
                 guessed_card_number.append(res)
     file_handler.write_card_numbers("card_number.json", guessed_card_number)
+
+
+def check_card_using_luna(card_number: str) -> bool:
+    card_number = [int(digit) for digit in card_number]
+    for i in range(len(card_number)):
+        if i % 2 == 0:
+            card_number[i] *= 2
+            if card_number[i] > 9:
+                card_number[i] = (card_number[i] % 10) + (card_number[i] // 10)
+    return sum(card_number) % 10 == 0
