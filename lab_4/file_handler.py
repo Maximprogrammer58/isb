@@ -13,9 +13,9 @@ def read_json(path: str) -> dict:
         logging.error(error)
 
 
-def write_card_numbers(path: str, card_numbers: list) -> None:
+def write_card_number(path: str, card_numbers: list) -> None:
     try:
         with open(path, "w", encoding="UTF-8") as file:
-            json.dump({"card_numbers":  card_numbers}, file)
+            json.dump({"card_number":  card_numbers}, file)
     except Exception as error:
         logging.error(error)
