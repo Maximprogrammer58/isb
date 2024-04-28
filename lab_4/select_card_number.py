@@ -6,7 +6,21 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    """ Main window of the gui-program
+        Methods:
+            setupUi(MainWindow): creating widget objects
+            retranslateUi(MainWindow): sets the text and headers of the widgets
+            __warning_icon(text, info): pop-up message when an exception occurs
+            __success_icon(text, info): pop-up message when the process is success
+            load_bins(): downloading bins number from a file
+            select_card_number(): selecting a bank card number
+            check_card_number(): checking for the correctness of the bank card number
+    """
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
+        """Creating widget objects in the appropriate containers
+            Args:
+                MainWindow: base window of the gui-program
+        """
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(796, 919)
         self.bins = None
@@ -125,7 +139,11 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
+        """Sets the text and headers of the widgets
+            Args:
+                MainWindow: base window of the gui-program
+        """
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title.setText(_translate("MainWindow", "Selecting a bank card number by hash"))
@@ -141,9 +159,9 @@ class Ui_MainWindow(object):
 
     def __warning_icon(self, text: str, info: str) -> None:
         """A pop-up message when an exception occurs
-        Args:
-            text: the MessageBox header
-            info: text of MessageBox
+            Args:
+                text: the MessageBox header
+                info: text of MessageBox
         """
         error = QtWidgets.QMessageBox()
         error.setIcon(QMessageBox.Warning)
@@ -152,12 +170,18 @@ class Ui_MainWindow(object):
         error.exec_()
 
     def __success_icon(self, text: str, info: str) -> None:
+        """A pop-up message when the process is completed successfully
+            Args:
+                text: the MessageBox header
+                info: text of MessageBox
+         """
         success = QtWidgets.QMessageBox()
         success.setWindowTitle(text)
         success.setText(info)
         success.exec_()
 
-    def load_bins(self):
+    def load_bins(self) -> None:
+        """Downloading bins number from a file"""
         path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if path != '':
             try:
@@ -168,7 +192,8 @@ class Ui_MainWindow(object):
         else:
             self.__warning_icon("Warning", "The file is not selected")
 
-    def select_card_number(self):
+    def select_card_number(self) -> None:
+        """Selecting a bank card number"""
         hash = self.input_hash.text().strip()
         last_digit = self.input_last_digit.text()
         if hash and last_digit and self.bins:
@@ -179,7 +204,8 @@ class Ui_MainWindow(object):
         else:
             self.__warning_icon("Warning", "Enter the data correctly")
 
-    def check_card_number(self):
+    def check_card_number(self) -> None:
+        """Checking for the correctness of the bank card number"""
         card_number = self.input_for_luna.text().strip()
         if card_number:
             is_card_number = check_card_using_luna(card_number)
